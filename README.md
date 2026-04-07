@@ -1,24 +1,70 @@
-# README
+# Tiny URL Application
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+A basic Rails application that provides URL shortening with:
+- optional custom alias support
+- deterministic hash-based alias generation
+- redirect endpoint using query param alias
+- ERB frontend (home page + invalid URL page)
 
-Things you may want to cover:
+## Stack
 
-* Ruby version
+- Ruby `3.4.7`
+- Rails `7.2.3`
+- MySQL
 
-* System dependencies
+## Setup
 
-* Configuration
+1. Install gems:
 
-* Database creation
+```bash
+bundle install
+```
 
-* Database initialization
+2. Configure environment variables in `.env`:
 
-* How to run the test suite
+```bash
+BASE_URL=http://localhost:3000
+GET_ENDPOINT=tiny
+```
 
-* Services (job queues, cache servers, search engines, etc.)
+3. Configure DB credentials in `config/database.yml` for your local MySQL.
 
-* Deployment instructions
+4. Create and migrate database:
 
-* ...
+```bash
+bin/rails db:create
+bin/rails db:migrate
+```
+
+5. Start server:
+
+```bash
+bin/rails server
+```
+
+Open: `http://localhost:3000`
+
+## Routes
+
+- `GET /` -> home form
+- `POST /tiny_url/create` -> create tiny URL
+- `GET /tiny?alias=...` -> redirect to original URL (or invalid page)
+
+`GET_ENDPOINT` changes the retrieval path (`/tiny` by default).
+
+## Tiny URL Rules
+
+- Table: `tiny_urls` with `alias`, `original_url`, timestamps.
+- `alias` is unique at model/database level.
+- User-entered alias:
+  - max 40 chars enforced in controller
+  - if already exists, show error on same page
+- Alias not entered:
+  - if `original_url` already exists, reuse existing alias
+  - else generate alias from SHA256 hash (128-bit hex substring)
+
+## Notes
+
+- `.env` is ignored by git. Do not commit secrets.
+- `Gemfile.lock` should be committed for app consistency.
+- `vendor/bundle` should not be committed.
