@@ -1,0 +1,44 @@
+<div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #f4f7fb; padding: 24px;">
+  <div style="width: 100%; max-width: 560px; background: #ffffff; border: 1px solid #e3e8ef; border-radius: 12px; padding: 24px; box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);">
+    <h1 style="margin: 0 0 8px; text-align: center; color: #1f2937;">Tiny URL</h1>
+    <p style="margin: 0 0 20px; text-align: center; color: #6b7280;">Create short links quickly.</p>
+
+    <% if flash.now[:alert].present? %>
+      <p style="margin: 0 0 16px; background: #fde8ea; color: #b00020; border: 1px solid #f6c4cc; border-radius: 8px; padding: 10px 12px;">
+        <%= flash.now[:alert] %>
+      </p>
+    <% end %>
+
+    <% if flash.now[:notice].present? %>
+      <p style="margin: 0 0 16px; background: #e7f8ec; color: #0a7a00; border: 1px solid #bfe9ca; border-radius: 8px; padding: 10px 12px;">
+        <%= flash.now[:notice] %>
+      </p>
+    <% end %>
+
+    <%= form_with model: @tiny_url, url: create_tiny_url_path, method: :post, local: true do |f| %>
+      <div style="margin-bottom: 12px;">
+        <%= f.label :original_url, "Original URL", style: "display:block; margin-bottom:6px; color:#374151; font-weight:600;" %>
+        <%= f.url_field :original_url, required: true, placeholder: "https://example.com/page", style: "width:100%; box-sizing:border-box; border:1px solid #cbd5e1; border-radius:8px; padding:10px 12px;" %>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <%= f.label :alias, "Alias (optional, max 40 chars)", style: "display:block; margin-bottom:6px; color:#374151; font-weight:600;" %>
+        <%= f.text_field :alias, maxlength: 40, placeholder: "custom-alias", style: "width:100%; box-sizing:border-box; border:1px solid #cbd5e1; border-radius:8px; padding:10px 12px;" %>
+      </div>
+
+      <div style="text-align: center;">
+        <%= f.submit "Create Tiny URL", style: "background:#2563eb; color:#ffffff; border:none; border-radius:8px; padding:10px 16px; font-weight:600; cursor:pointer;" %>
+      </div>
+    <% end %>
+
+    <% if @generated_short_url.present? %>
+      <hr style="margin: 20px 0; border: 0; border-top: 1px solid #e5e7eb;">
+      <p style="margin: 0 0 8px; color: #111827; font-weight: 700;">Generated Tiny URL:</p>
+      <p style="margin: 0;">
+        <a href="<%= @generated_short_url %>" target="_blank" rel="noopener noreferrer" style="color: #1d4ed8; word-break: break-all;">
+          <%= @generated_short_url %>
+        </a>
+      </p>
+    <% end %>
+  </div>
+</div>
